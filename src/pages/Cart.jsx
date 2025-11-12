@@ -8,6 +8,8 @@ export default function Cart(){
   const [items, setItems] = useState([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [email, setEmail] = useState('')
+  const [status, setStatus] = useState('')
 
   useEffect(()=>{ load() },[])
 
@@ -21,6 +23,27 @@ export default function Cart(){
       setTotal(data.total || 0)
     }catch(e){ console.error(e) }
     finally{ setLoading(false) }
+  }
+
+  const payDemo = async () => {
+    try{
+      const cart_id = localStorage.getItem('cart_id')
+      const res = await fetch(`${getBackend()}/checkout`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ cart_id, email })
+      })
+      const data = await res.json()
+      if (data.status === 'paid'){
+        setStatus(`Payment successful! Order #${data.order_id}`)
+        // clear local cart id to simulate new session
+        localStorage.removeItem('cart_id')
+      } else {
+        setStatus('Payment failed')
+      }
+    } catch(e){
+      setStatus('Payment failed')
+    }
   }
 
   return (
@@ -46,12 +69,14 @@ export default function Cart(){
               ))}
             </div>
 
-            <aside className="p-4 border border-gray-100 rounded-xl h-fit">
-              <h2 className="font-semibold mb-2">Summary</h2>
+            <aside className="p-4 border border-gray-100 rounded-xl h-fit space-y-3">
+              <h2 className="font-semibold">Summary</h2>
               <div className="flex items-center justify-between text-sm text-gray-600">
                 <span>Subtotal</span><span>${total.toFixed(2)}</span>
               </div>
-              <button className="mt-4 w-full px-5 py-2.5 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700">Checkout</button>
+              <input type="email" placeholder="Email (for receipt)" value={email} onChange={e=>setEmail(e.target.value)} className="w-full rounded-md border-gray-300" />
+              <button onClick={payDemo} className="w-full px-5 py-2.5 rounded-full bg-indigo-600 text-white font-medium hover:bg-indigo-700">Pay (Demo)</button>
+              {status && <p className="text-sm text-green-600">{status}</p>}
             </aside>
           </div>
         ) : (
