@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import ProductCard from '../components/ProductCard'
 import Footer from '../components/Footer'
+import { motion } from 'framer-motion'
 
 const getBackend = () => import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
 
@@ -34,16 +35,16 @@ export default function Collection(){
       <Navbar />
 
       <section className="max-w-6xl mx-auto px-4 py-10">
-        <h1 className="text-2xl font-bold capitalize mb-6">{handle} Collection</h1>
+        <motion.h1 initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="text-2xl font-bold capitalize mb-6">{handle} Collection</motion.h1>
         {loading ? (
           <p className="text-gray-500">Loading...</p>
         ) : (
           items.length ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            <motion.div layout className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {items.map(item => (
                 <ProductCard key={item.id} item={item} />
               ))}
-            </div>
+            </motion.div>
           ) : (
             <p className="text-gray-500">No products found.</p>
           )

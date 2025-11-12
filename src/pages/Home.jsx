@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar'
 import Hero from '../components/Hero'
 import ProductCard from '../components/ProductCard'
 import Footer from '../components/Footer'
+import { motion } from 'framer-motion'
 
 const getBackend = () => import.meta.env.VITE_BACKEND_URL || 'http://localhost:8000'
 
@@ -51,11 +52,11 @@ export default function Home(){
         {loading ? (
           <p className="text-gray-500">Loading...</p>
         ) : (
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <motion.div layout className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {items.map(item => (
               <ProductCard key={item.id} item={item} />
             ))}
-          </div>
+          </motion.div>
         )}
       </section>
 
